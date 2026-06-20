@@ -38,6 +38,12 @@ FREQUENCY_IN_HOURS=1
 LOG_PATH=log
 BACKUP_PATH=/home/user/backups
 
+# Docker/Compose options
+DOCKER_NETWORK_NAME=external-network-name
+DOCKER_NETWORK_EXTERNAL=true
+DOCKER_BACKUP_PATH=/home/user/backups
+DOCKER_LOG_PATH=/home/user/logs
+
 # Telegram Bot Integration (Optional)
 TELEGRAM_BOT_TOKEN=your-telegram-bot-token
 TELEGRAM_CHAT_ID=your-telegram-chat-id
