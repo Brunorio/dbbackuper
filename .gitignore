@@ -1,0 +1,13 @@
+backups/**
+!backups/.keep
+logs/**
+!logs/.keep
+node_modules
+dist
+logs
+log
+.env
+.vscode
+tasks.json
+output.log
+yarn_dev.pid

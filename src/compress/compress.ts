@@ -1,0 +1,45 @@
+import archiver from 'archiver';
+import unzipper from 'unzipper';
+
+export interface CompressOutput {
+  compressed: boolean
+  file: Buffer
+}
+
+export default class Compress {
+  static async compress(file: Buffer, filename: string): Promise<CompressOutput> {
+    return await (new Promise((resolve, reject) => {
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      const outputBuffers: Buffer[] = [];
+
+      archive.on('data', (chunk: Buffer) => outputBuffers.push(chunk));
+      archive.on('error', (err: Error) => { reject(err); });
+
+      archive.on('end', () => {
+        const result = Buffer.concat(outputBuffers);
+        resolve({
+          compressed: result.length < file.length,
+          file: result.length < file.length ? result : file
+        });
+      });
+
+      archive.append(file, { name: filename });
+      void archive.finalize();
+    }));
+  }
+
+  static async decompress(file: Buffer): Promise<Buffer> {
+    if (!this.isZip(file)) {
+      return file;
+    }
+    const result = await unzipper.Open.buffer(file);
+    return await result.files[0].buffer();
+  }
+
+  private static isZip(buffer: Buffer): boolean {
+    if (!Buffer.isBuffer(buffer) || buffer.length < 4) {
+      return false;
+    }
+    return buffer[0] === 0x50 && buffer[1] === 0x4B && buffer[2] === 0x03 && buffer[3] === 0x04;
+  }
+}

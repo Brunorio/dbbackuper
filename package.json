@@ -1,0 +1,32 @@
+{
+  "name": "database-backup",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run build && TZ=America/Sao_Paulo node ./dist/main.js",
+    "build": "node_modules/typescript/bin/tsc",
+    "start:production": "TZ=America/Sao_Paulo node /app/dist/main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/storage": "^5.18.3",
+    "archiver": "^7.0.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.22.5",
+    "node-telegram-bot-api": "^0.66.0",
+    "telegraf": "^4.16.3",
+    "tsc": "^2.0.4",
+    "typescript": "^5.8.3",
+    "unzipper": "^0.12.3"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.3",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.20.0",
+    "@types/node-telegram-bot-api": "^0.64.8",
+    "@types/unzipper": "^0.10.11"
+  }
+}
