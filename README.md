@@ -39,8 +39,7 @@ LOG_PATH=log
 BACKUP_PATH=/home/user/backups
 
 # Docker/Compose options
-DOCKER_NETWORK_NAME=external-network-name
-DOCKER_NETWORK_EXTERNAL=true
+DB_CONTAINER_NAME=db
 DOCKER_BACKUP_PATH=/home/user/backups
 DOCKER_LOG_PATH=/home/user/logs
 
@@ -117,10 +116,18 @@ Create a `tasks.json` file in the root directory specifying the database hosts a
 
 ### Docker Execution
 
-The project comes with a multi-stage `Dockerfile` that compiles the TypeScript application, builds `mydumper` from source on Alpine Linux, and prepares a minimal production image.
+The project comes with a multi-stage `Dockerfile` (based on Debian Slim) that compiles the TypeScript application, builds `mydumper` `v0.10.5` from source (specifically with SSL disabled via `-DWITH_SSL=OFF` to bypass connection issues with databases not supporting TLS/SSL), and prepares a minimal production image.
+
+#### Service Network Mode
+To simplify connectivity and resolve TLS/SSL errors, the backup container is configured to run in **container network mode**, sharing the network namespace of the target database container.
+This is specified in `docker-compose.yml` via:
+```yaml
+network_mode: "container:${DB_CONTAINER_NAME:-db}"
+```
+This enables `dbbackuper` to connect directly to the database via `localhost` (port 3306), bypassing external networks.
 
 1. **Configure Environment Variables**:
-   Define `DOCKER_BACKUP_PATH` and `DOCKER_LOG_PATH` or replace them in `docker-compose.yml`.
+   Define `DB_CONTAINER_NAME` (the name of the database container to attach to, e.g. `db`), `DOCKER_BACKUP_PATH`, and `DOCKER_LOG_PATH` in `.env`.
 
 2. **Start the Container**:
    ```bash
