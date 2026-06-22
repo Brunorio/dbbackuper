@@ -10,4 +10,4 @@ Logger.init();
 Logger.save('API Application is running.');
 
 new Worker(path.resolve(__dirname, './src/cron'));
-new TelegramBotDbListener().listen();
+new TelegramBotDbListener(true).listen();

@@ -12,10 +12,12 @@ const iconeModeType: Record<StorageType, string> = {
 export default class TelegramBotDbListener {
   private readonly bot?: TelegramBot = undefined;
 
-  constructor() {
+  constructor(polling = false) {
     if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
-      Logger.save('Telegram bot initialized');
-      this.bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { polling: true });
+      this.bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { polling });
+      if (this.bot) {
+        Logger.save('Telegram bot initialized');
+      }
     }
   }
 
@@ -42,10 +44,10 @@ export default class TelegramBotDbListener {
     });
   }
 
-  public sendMessage(message: string): void {
+  public sendMessage(message: string, options?: any): void {
     if (this.bot) {
       console.log(message);
-      this.bot.sendMessage(process.env.TELEGRAM_CHAT_ID!, message);
+      this.bot.sendMessage(process.env.TELEGRAM_CHAT_ID!, message, options);
     }
   }
 } 

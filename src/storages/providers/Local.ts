@@ -13,7 +13,7 @@ export default class LocalProviderStorage extends Storage {
 
   protected async save(temporaryPathFile: string, filename: string): Promise<void> {
     try {
-      Logger.save('Init save in LocalProviderStorage');
+      Logger.save(`Init save in LocalProviderStorage | Filename: ${filename}`);
       await this.ensureFolderExists();
       await fs.promises.copyFile(temporaryPathFile, `${this.resolvePath()}/${filename}`);
     } catch (error: any) {
