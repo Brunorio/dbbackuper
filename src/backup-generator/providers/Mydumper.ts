@@ -8,7 +8,8 @@ export default class MydumperProviderBackupGenerator extends BackupGenerator {
     const filename = this.generateBackupName();
     const pathfolder = `${this.pathFolder}/${filename}`;
 
-    execSync(`mydumper --host ${this.credentials.host} --user ${this.credentials.user} --password '${this.credentials.password}' --port ${this.credentials.port} --database ${this.credentials.database} --outputdir ${pathfolder} --compress --triggers --events --routines --verbose 3`);
+    const sslMode = this.credentials.sslMode || 'DISABLED';
+    execSync(`mydumper --host ${this.credentials.host} --user ${this.credentials.user} --password '${this.credentials.password}' --port ${this.credentials.port} --database ${this.credentials.database} --outputdir ${pathfolder} --compress --triggers --events --routines --verbose 3 --ssl-mode ${sslMode || 'DISABLED'}`);
 
     await CompressFolder.compress(this.pathFolder, filename);
   

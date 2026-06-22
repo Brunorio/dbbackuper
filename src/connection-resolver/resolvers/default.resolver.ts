@@ -15,6 +15,7 @@ export default class DefaultResolver implements IConnectionResolver {
                 host: task.host,
                 port: task.port,
                 database: task.database!,
+                sslMode: task.sslMode,
             },
         ];
     }
