@@ -17,6 +17,10 @@ export default class BackupReporter {
     this.botListener = new TelegramBotDbListener(false);
   }
 
+  private escapeMarkdown(text: string): string {
+    return text.replace(/[*_`[\]]/g, '\\$&');
+  }
+
   public report(stats: BackupStat[], duration: string): void {
     let message = `📊 *Relatório de Backup*\n\n`;
     message += `📅 *Data:* ${new Date().toLocaleString('pt-BR')}\n`;
@@ -28,9 +32,12 @@ export default class BackupReporter {
     if (successes.length > 0) {
       message += `✅ *Sucessos:*\n`;
       for (const s of successes) {
-        message += `• *Tarefa:* ${s.taskName} (Banco: ${s.database || 'todos'})\n`;
+        const taskName = this.escapeMarkdown(s.taskName);
+        const database = s.database ? this.escapeMarkdown(s.database) : 'todos';
+        message += `• *Tarefa:* ${taskName} (Banco: ${database})\n`;
         for (const file of s.files) {
-          message += `  📁 *Arquivo:* \`${file.filename}\` (${file.size})\n`;
+          const filename = file.filename.replace(/`/g, '');
+          message += `  📁 *Arquivo:* \`${filename}\` (${file.size})\n`;
         }
         message += `  🚀 *Destinos:* ${s.providers.join(', ')}\n\n`;
       }
@@ -39,8 +46,11 @@ export default class BackupReporter {
     if (failures.length > 0) {
       message += `❌ *Falhas:*\n`;
       for (const f of failures) {
-        message += `• *Tarefa:* ${f.taskName} (Banco: ${f.database || 'todos'})\n`;
-        message += `  ⚠️ *Erro:* ${f.error}\n\n`;
+        const taskName = this.escapeMarkdown(f.taskName);
+        const database = f.database ? this.escapeMarkdown(f.database) : 'todos';
+        const error = f.error ? this.escapeMarkdown(f.error) : 'Erro desconhecido';
+        message += `• *Tarefa:* ${taskName} (Banco: ${database})\n`;
+        message += `  ⚠️ *Erro:* ${error}\n\n`;
       }
     }
 
