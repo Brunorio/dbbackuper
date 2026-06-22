@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine3.19@sha256:ef3f47741e161900ddd07addcaca7e76534a9205e4cd73b2ed091ba339004a75 AS build
+FROM node:25-alpine AS build
 
 RUN apk update && \
     apk add --no-cache \
@@ -15,7 +15,7 @@ RUN git clone https://github.com/mydumper/mydumper.git && \
     cd mydumper && \
     mkdir build && \
     cd build && \
-    cmake .. && \
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. && \
     make && \
     make install
 
@@ -29,7 +29,7 @@ RUN npm install
 
 RUN npm run build
 
-FROM node:20-alpine3.19@sha256:ef3f47741e161900ddd07addcaca7e76534a9205e4cd73b2ed091ba339004a75 as production
+FROM node:25-alpine AS production
 
 COPY --from=build /usr/local/bin/mydumper /usr/local/bin/
 COPY --from=build /usr/local/bin/myloader /usr/local/bin/
