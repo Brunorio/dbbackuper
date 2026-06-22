@@ -17,7 +17,6 @@ export default class EntireDatabaseResolver implements IConnectionResolver {
             host: task.host,
             port: task.port,
             database: Database,
-            sslMode: task.sslMode,
         }));
     }
 
