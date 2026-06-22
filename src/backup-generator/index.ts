@@ -28,7 +28,7 @@ export default abstract class BackupGenerator implements IBackupGenerator {
   }
 
   public async execute(): Promise<FileGenerateInfo> {
-    Logger.save(`Starting backup the "${this.credentials.name}" database.`, true);
+    Logger.save(`Starting backup the "${this.credentials.database}" database.`, true);
     this.cleanRootPath();
     this.createFolder();
     const result = await this.generate();

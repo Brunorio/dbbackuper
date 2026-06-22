@@ -8,6 +8,8 @@ import { performance } from 'perf_hooks';
 import StorageOptionData from './storage.option.data';
 import ConnectionResolver from './connection-resolver';
 import { FileGenerateInfo } from './backup-generator';
+import BackupReporter, { BackupStat } from './backup-reporter';
+import FileSizeCalculator from './file-size-calculator';
 
 dotenv.config();
 const tasks = TaskData.get();
@@ -15,7 +17,17 @@ const tasks = TaskData.get();
 const execute = async () => {
   const startedAt = performance.now();
   Logger.save('Starting backup process', true);
+  const stats: BackupStat[] = [];
+
   await Promise.all(tasks.map(async (task: DbTask) => {
+    const stat: BackupStat = {
+      taskName: task.name,
+      database: task.database,
+      files: [],
+      providers: task.storageProviders.map(p => p.name.toUpperCase()),
+      success: false,
+    };
+
     try {
       const connections = await ConnectionResolver.resolve(task);
       const results: FileGenerateInfo[] = [];
@@ -35,12 +47,30 @@ const execute = async () => {
             .process(result.pathfile, result.filename);
         }
       }
+
+      for (const result of results) {
+        const sizeStr = FileSizeCalculator.getFormatSize(result.pathfile);
+        stat.files.push({ filename: result.filename, size: sizeStr });
+      }
+
+      stat.success = true;
     } catch (error) {
-      Logger.save(`Error generating backup: ${error}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Logger.save(`Error generating backup: ${errorMessage}`);
+      stat.success = false;
+      stat.error = errorMessage;
+    } finally {
+      stats.push(stat);
     }
   }));
+
   const endedAt = performance.now();
-  Logger.save(`Backup process finished in ${((endedAt - startedAt) / 1000).toFixed(2)} seconds.\n\n`, true);
+  const duration = ((endedAt - startedAt) / 1000).toFixed(2);
+  Logger.save(`Backup process finished in ${duration} seconds.\n\n`, true);
+
+  // Send statistics to Telegram
+  const reporter = new BackupReporter();
+  reporter.report(stats, duration);
 }
 
 const cron = (hours: number) => {
