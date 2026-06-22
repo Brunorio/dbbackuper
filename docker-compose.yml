@@ -3,14 +3,9 @@ services:
     build: 
       context: ./
     container_name: dbbackuper
+    network_mode: "container:${DB_CONTAINER_NAME:-db}"
     volumes:
       - ${DOCKER_BACKUP_PATH}:/app/backups
       - ${DOCKER_LOG_PATH}:/app/logs
-    networks:
-      - database_backup_net
 
-networks:
-  database_backup_net:
-    name: ${DOCKER_NETWORK_NAME}
-    external: ${DOCKER_NETWORK_EXTERNAL:-true}
 

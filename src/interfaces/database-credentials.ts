@@ -5,7 +5,6 @@ export default interface DatabaseConnection {
   host: string;
   port: number;
   database: string;
-  sslMode?: string;
 }
 
 export type StorageType = 'local' | 'gcloud';
@@ -23,5 +22,4 @@ export interface DbTask {
   host: string;
   port: number;
   database?: string;
-  sslMode?: string;
 }
