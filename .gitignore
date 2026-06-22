@@ -5,7 +5,7 @@ logs/**
 node_modules
 dist
 logs
-log
+/log
 .env
 .vscode
 tasks.json
