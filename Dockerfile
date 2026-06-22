@@ -9,13 +9,13 @@ RUN apk update && \
     mariadb-dev \
     glib-dev \
     zlib-dev \
-    pcre2-dev
+    pcre-dev
 
-RUN git clone https://github.com/mydumper/mydumper.git && \
+RUN git clone --branch v0.10.5 --depth 1 https://github.com/mydumper/mydumper.git && \
     cd mydumper && \
     mkdir build && \
     cd build && \
-    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. && \
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DWITH_SSL=OFF .. && \
     make && \
     make install
 
@@ -39,7 +39,7 @@ RUN apk update && \
     mariadb-connector-c \
     glib \
     zlib \
-    pcre2
+    pcre
 
 WORKDIR /app
 
